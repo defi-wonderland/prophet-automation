@@ -1,0 +1,22 @@
+# General
+yarn-error.log
+node_modules
+
+# Vscode settings
+.vscode 
+
+# Config files
+.env
+
+# Avoid ignoring gitkeep
+!/**/.gitkeep
+
+# Ignore typechain generated files
+src/types/typechain
+
+# Ignore coverage report
+coverage
+.nyc_output
+
+#Output
+dist

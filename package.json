@@ -1,0 +1,59 @@
+{
+  "name": "opoo-automation",
+  "version": "1.0.0",
+  "description": "Optimism Oracle automation tool",
+  "repository": "git@github.com:defi-wonderland/opoo-automation-private.git",
+  "license": "MIT",
+  "author": "Wonderland",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "rm -rf dist && tsc -p tsconfig.json",
+    "lint:check": "prettier --check './**' && eslint ./src",
+    "lint:fix": "sort-package-json && prettier --write './**' && eslint ./src --fix",
+    "test": "cross-env mocha 'test/**/*.spec.ts' --timeout 10000",
+    "test:coverage": "nyc --reporter=lcov --reporter=text mocha 'test/**/*.spec.ts'"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.ts": "eslint ./src/**/*.ts",
+    "package.json": "sort-package-json"
+  },
+  "dependencies": {
+    "@ethersproject/providers": "5.7.2",
+    "@gelatonetwork/automate-sdk": "2.14.0",
+    "@nomiclabs/hardhat-ethers": "2.2.3",
+    "dotenv": "16.3.1",
+    "hardhat": "2.13.0",
+    "opoo-core-abi": "0.0.0-c728680e"
+  },
+  "devDependencies": {
+    "@types/chai": "4.3.5",
+    "@types/chai-as-promised": "7.1.5",
+    "@types/mocha": "10.0.1",
+    "@types/node": "20.2.3",
+    "@typescript-eslint/eslint-plugin": "5.59.6",
+    "@typescript-eslint/parser": "5.59.6",
+    "chai": "4.3.7",
+    "chai-as-promised": "7.1.1",
+    "cross-env": "7.0.3",
+    "eslint": "8.40.0",
+    "husky": "8.0.3",
+    "lint-staged": "10",
+    "mocha": "10.2.0",
+    "nyc": "15.1.0",
+    "prettier": "2.8.8",
+    "sinon": "15.2.0",
+    "sort-package-json": "2.4.1",
+    "ts-node": "10.9.1",
+    "tsconfig-paths": "4.2.0",
+    "typescript": "5.0.4"
+  }
+}
