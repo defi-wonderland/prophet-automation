@@ -14,7 +14,8 @@
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "lint:check": "prettier --check './**' && eslint ./src",
     "lint:fix": "sort-package-json && prettier --write './**' && eslint ./src --fix",
-    "test": "cross-env mocha 'test/**/*.spec.ts' --timeout 10000",
+    "scripts:loop-disputes": "ts-node src/scripts/loop-disputes.ts",
+    "test": "cross-env mocha 'test/**/*.spec.ts' --network tenderly --timeout 1000000",
     "test:coverage": "nyc --reporter=lcov --reporter=text mocha 'test/**/*.spec.ts'"
   },
   "husky": {
@@ -26,13 +27,19 @@
     "*.ts": "eslint ./src/**/*.ts",
     "package.json": "sort-package-json"
   },
+  "resolutions": {
+    "@nomiclabs/hardhat-ethers/ethers": "5.7.2",
+    "opoo-sdk/ethers": "6.7.0"
+  },
   "dependencies": {
     "@ethersproject/providers": "5.7.2",
     "@gelatonetwork/automate-sdk": "2.14.0",
     "@nomiclabs/hardhat-ethers": "2.2.3",
     "dotenv": "16.3.1",
+    "ethers-v6": "npm:ethers@6.7.0",
     "hardhat": "2.13.0",
-    "opoo-core-abi": "0.0.0-c728680e"
+    "opoo-core-abi": "0.0.0-c728680e",
+    "opoo-sdk": "0.0.0-67457004"
   },
   "devDependencies": {
     "@types/chai": "4.3.5",

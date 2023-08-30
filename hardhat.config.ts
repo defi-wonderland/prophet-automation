@@ -5,6 +5,7 @@ import { HardhatUserConfig } from 'hardhat/config';
 dotenv.config({ path: './.env' });
 
 const config: HardhatUserConfig = {
+  defaultNetwork: 'tenderly',
   solidity: {
     version: '0.8.19',
   },
