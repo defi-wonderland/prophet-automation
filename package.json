@@ -39,7 +39,7 @@
     "ethers-v6": "npm:ethers@6.7.0",
     "hardhat": "2.13.0",
     "opoo-core-abi": "0.0.0-c728680e",
-    "opoo-sdk": "0.0.0-67457004"
+    "opoo-sdk": "0.0.0-235a44d0"
   },
   "devDependencies": {
     "@types/chai": "4.3.5",

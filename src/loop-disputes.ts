@@ -27,7 +27,7 @@ export class LoopDisputes {
     // Then we loop over the pages
     for (let i = 0; i < totalCalls; i++) {
       console.log('getting requestIds', i * PAGE_SIZE, PAGE_SIZE);
-      const disputes = await sdk.batching.getDisputeData(i * PAGE_SIZE, PAGE_SIZE);
+      const disputes = await sdk.batching.listDisputes(i * PAGE_SIZE, PAGE_SIZE);
       disputeData.push(...disputes);
     }
 
@@ -38,7 +38,7 @@ export class LoopDisputes {
         if (status > 0 && status - 1 <= 1) {
           // These are the the disputes that are active or escalated and can be resolved
           console.log(`creating task to resolve disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset} dispute status: ${textColorGreen}${DisputeStatusMapping[dispute.status]}${textColorReset}`);
-          disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
+         // disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
         }
       }
     }
