@@ -29,3 +29,4 @@ LICENSE
 src/types/typechain
 src/batching/contracts
 dist
+tasks-cache

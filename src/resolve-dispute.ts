@@ -11,13 +11,13 @@ export class ResolveDispute {
     const oracleContract = new hre.ethers.Contract(oracleAddress, IOracleAbi, signer);
 
     const { taskId, tx }: TaskTransaction = await automate.createTask({
-      execAddress: oracleContract.address, // gelatoRelay
+      execAddress: oracleContract.address, //TODO: change for gelatoRelay ask Ashi
       // address _job, bytes calldata _jobData, address _feeRecipient
       execSelector: oracleContract.interface.getSighash('resolveDispute(bytes32)'),
       //execData?: string;  [address(job), work(uint256 _counter) [_counter], msg.sender]
       execData: oracleContract.interface.encodeFunctionData('resolveDispute', [disputeId]),
       execAbi: oracleContract.interface.format('json') as string,
-      name: 'Automated resolveDispute every 10min',
+      name: `Resolve Dispute ${disputeId}`,
       dedicatedMsgSender: false,
       singleExec: true,
     });

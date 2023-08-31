@@ -3,12 +3,15 @@ import { OpooSDK } from 'opoo-sdk';
 import { ContractRunner } from 'ethers-v6';
 import { address } from './constants';
 import { ResolveDispute } from './resolve-dispute';
+import { TasksCache } from './tasks-cache';
 
-const PAGE_SIZE = 50;
-const textColorGreen = "\x1b[32m";
-const textColorReset = "\x1b[0m";
+const PAGE_SIZE = 80;
+const textColorGreen = '\x1b[32m';
+const textColorReset = '\x1b[0m';
 
 export class LoopDisputes {
+  scriptsCache: TasksCache = new TasksCache();
+
   public async loopDisputes() {
     const disputeResolver = new ResolveDispute();
 
@@ -36,9 +39,27 @@ export class LoopDisputes {
         const status = Number(dispute.status);
 
         if (status > 0 && status - 1 <= 1) {
-          // These are the the disputes that are active or escalated and can be resolved
-          console.log(`creating task to resolve disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset} dispute status: ${textColorGreen}${DisputeStatusMapping[dispute.status]}${textColorReset}`);
-         // disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
+          if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
+            console.log(`task already created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}`);
+          } else {
+            // These are the the disputes that are active or escalated and can be resolved
+            console.log(
+              `creating task to resolve disputeId: ${textColorGreen}${
+                dispute.disputeId
+              }${textColorReset} dispute status: ${textColorGreen}${
+                DisputeStatusMapping[dispute.status]
+              }${textColorReset}`
+            );
+
+            // simulate the task -> create the gelato task -> save to cache the task created
+            // TODO: test simulation -> if simulation is successful we can automate the task
+            // disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
+            // If the task was successfully submitted to gelato we can set the cache
+            console.log(
+              `task created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}, saving to cache`
+            );
+            await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
+          }
         }
       }
     }
@@ -46,10 +67,10 @@ export class LoopDisputes {
 }
 
 const DisputeStatusMapping: Record<number, string> = {
-  0: "None",
-  1: "Active",
-  2: "Escalated",
-  3: "Won",
-  4: "Lost",
-  5: "NoResolution",
+  0: 'None',
+  1: 'Active',
+  2: 'Escalated',
+  3: 'Won',
+  4: 'Lost',
+  5: 'NoResolution',
 };
