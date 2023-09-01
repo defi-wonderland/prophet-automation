@@ -4,36 +4,24 @@ import { ContractRunner } from 'ethers-v6';
 import { address } from './constants';
 import { ResolveDispute } from './resolve-dispute';
 import { TasksCache } from './tasks-cache';
+import { DisputeData } from 'opoo-sdk/dist/batching/getBatchDisputeData';
 
 const PAGE_SIZE = 80;
 const textColorGreen = '\x1b[32m';
 const textColorReset = '\x1b[0m';
+const TRIES = 5;
 
 export class LoopDisputes {
-  scriptsCache: TasksCache = new TasksCache();
+  private scriptsCache: TasksCache = new TasksCache();
+  private disputeResolver = new ResolveDispute();
 
-  public async loopDisputes() {
-    const disputeResolver = new ResolveDispute();
+  async listDisputes(sdk: OpooSDK, i: number, PAGE_SIZE: number): Promise<DisputeData[]> {
+    const disputes = await sdk.batching.listDisputes(i * PAGE_SIZE, PAGE_SIZE);
+    return disputes;
+  }
 
-    const [signer] = await hre.ethers.getSigners();
-    const runner = signer as unknown as ContractRunner;
-
-    const sdk = new OpooSDK(runner, address.deployed.ORACLE);
-
-    // First we have to get the total requests count
-    const totalRequests = await sdk.helpers.totalRequestCount();
-
-    // Then we have to calculate how many call to the oracle to get the requests
-    const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
-
-    const disputeData = [];
-    // Then we loop over the pages
-    for (let i = 0; i < totalCalls; i++) {
-      console.log('getting requestIds', i * PAGE_SIZE, PAGE_SIZE);
-      const disputes = await sdk.batching.listDisputes(i * PAGE_SIZE, PAGE_SIZE);
-      disputeData.push(...disputes);
-    }
-
+  async processDisputeData(sdk: OpooSDK, disputeData: DisputeData[]) {
+    console.log('processing dispute data', disputeData.length);
     for (const data of disputeData) {
       for (const dispute of data.disputes) {
         const status = Number(dispute.status);
@@ -52,16 +40,67 @@ export class LoopDisputes {
             );
 
             // simulate the task -> create the gelato task -> save to cache the task created
-            // TODO: test simulation -> if simulation is successful we can automate the task
-            // disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
-            // If the task was successfully submitted to gelato we can set the cache
-            console.log(
-              `task created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}, saving to cache`
-            );
-            await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
+
+            try {
+              console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
+              // 1- Simulate
+              const result = await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
+              console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
+
+              // 2- Create the task in gelato
+              // disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
+              // If the task was successfully submitted to gelato we can set the cache
+              console.log(
+                `task created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}, saving to cache`
+              );
+
+              // 3- Save to cache
+              await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
+            } catch (error) {
+              console.log('error simulating resolve dispute with disputeId: ', dispute.disputeId);
+            }
           }
         }
       }
+    }
+  }
+
+  public async loopDisputes() {
+    const [signer] = await hre.ethers.getSigners();
+    const runner = signer as unknown as ContractRunner;
+
+    const sdk = new OpooSDK(runner, address.deployed.ORACLE);
+
+    // First we have to get the total requests count
+    const totalRequests = await sdk.helpers.totalRequestCount();
+
+    // Then we have to calculate how many call to the oracle to get the requests
+    const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
+
+
+    // Then we loop over the pages
+    for (let i = 0; i < totalCalls; i++) {
+      let disputeData: DisputeData[];
+      console.log('getting requestIds', i * PAGE_SIZE, PAGE_SIZE);
+
+      let j = TRIES;
+      do {
+        try {
+          disputeData = await this.listDisputes(sdk, i, PAGE_SIZE);
+          console.log('got requestIds', i * PAGE_SIZE, PAGE_SIZE);
+          // If the data is correct we can break the loop
+          break;
+        } catch (error) {
+          console.log('error getting requestIds, retrying', error);
+        }
+
+        j--;
+        if (j === 0) {
+          throw new Error('error getting requestIds, service unavailable');
+        }
+      } while (j > 0);
+
+      await this.processDisputeData(sdk, disputeData);
     }
   }
 }

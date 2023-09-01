@@ -2939,9 +2939,9 @@ bytes@3.1.2, bytes@^3.1.0:
   resolved "https://registry.npmjs.org/bytes/-/bytes-3.1.2.tgz"
   integrity sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==
 
-cacache@^18.0.0:
+cacache@18.0.0:
   version "18.0.0"
-  resolved "https://registry.npmjs.org/cacache/-/cacache-18.0.0.tgz"
+  resolved "https://registry.yarnpkg.com/cacache/-/cacache-18.0.0.tgz#17a9ecd6e1be2564ebe6cdca5f7cfed2bfeb6ddc"
   integrity sha512-I7mVOPl3PUCeRub1U8YoGz2Lqv9WOBpobZ8RyWFXmReuILz+3OAyTa5oH3QPdtKZD7N0Yk00aLfzn0qvp8dZ1w==
   dependencies:
     "@npmcli/fs" "^3.1.0"
@@ -6491,10 +6491,10 @@ opoo-core-abi@0.0.0-c728680e:
     forge-std "https://github.com/foundry-rs/forge-std.git#e8a047e3f40f13fa37af6fe14e6e06283d9a060e"
     solmate "https://github.com/transmissions11/solmate.git#bfc9c25865a274a7827fea5abf6e4fb64fc64e6c"
 
-opoo-sdk@0.0.0-235a44d0:
-  version "0.0.0-235a44d0"
-  resolved "https://registry.npmjs.org/opoo-sdk/-/opoo-sdk-0.0.0-235a44d0.tgz"
-  integrity sha512-rSQJsnYIjF3326FjACb/BuUq6M2l1hjjBYaWSfJz/7UqhegjRagmnt+7mVQ/o1eRVEopz3I3g9g+FBpzWegA9g==
+opoo-sdk@0.0.0-5ee8e49d:
+  version "0.0.0-5ee8e49d"
+  resolved "https://registry.yarnpkg.com/opoo-sdk/-/opoo-sdk-0.0.0-5ee8e49d.tgz#75e415c71aa53e2125bc6fadd64738f9991d810f"
+  integrity sha512-hE3P+wnQhRApdX4z0IEXWCwhMsEG0h7U09VQGdwIGJOxgwuY1IXCH3e0A8qxRtf7hE00I7c5h6flbv+cmhOFGg==
   dependencies:
     "@pinata/sdk" "2.1.0"
     axios "1.4.0"
@@ -7487,6 +7487,7 @@ string-argv@0.3.1:
   integrity sha512-a1uQGz7IyVy9YwhqjZIZu1c8JO8dNIe20xBmSS6qu9kv++k3JGzCVmprbNN5Kn+BgzD5E7YYwg1CcjuJMRNsvg==
 
 "string-width-cjs@npm:string-width@^4.2.0", string-width@^4.1.0, string-width@^4.2.0:
+  name string-width-cjs
   version "4.2.3"
   resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
@@ -7521,6 +7522,7 @@ stringify-object@^3.3.0:
     is-regexp "^1.0.0"
 
 "strip-ansi-cjs@npm:strip-ansi@^6.0.1", strip-ansi@^6.0.0, strip-ansi@^6.0.1:
+  name strip-ansi-cjs
   version "6.0.1"
   resolved "https://registry.npmjs.org/strip-ansi/-/strip-ansi-6.0.1.tgz"
   integrity sha512-Y38VPSHcqkFrCpFnQ9vuSXmquuv5oXOKpGeT6aGrr3o3Gc9AlVa6JBfUSOCnbxGGZF+/0ooI7KrPuUSztUdU5A==
@@ -7954,6 +7956,7 @@ workerpool@6.2.1:
   integrity sha512-ILEIE97kDZvF9Wb9f6h5aXK4swSlKGUcOEGiIYb2OOu/IrDU9iwj0fD//SsA6E5ibwJxpEvhullJY4Sl4GcpAw==
 
 "wrap-ansi-cjs@npm:wrap-ansi@^7.0.0", wrap-ansi@^7.0.0:
+  name wrap-ansi-cjs
   version "7.0.0"
   resolved "https://registry.npmjs.org/wrap-ansi/-/wrap-ansi-7.0.0.tgz"
   integrity sha512-YVGIj2kamLSTxw6NsZjoBxfSwsn0ycdesmc4p+Q21c5zPuZ1pl+NfxVdxPtdHvmNVOQ6XSYG4AUtyt/Fi7D16Q==
