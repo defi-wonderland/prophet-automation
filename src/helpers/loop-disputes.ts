@@ -1,9 +1,9 @@
 import hre from 'hardhat';
 import { OpooSDK } from 'opoo-sdk';
 import { ContractRunner } from 'ethers-v6';
-import { address } from './constants';
-import { ResolveDispute } from './resolve-dispute';
-import { TasksCache } from './tasks-cache';
+import { address } from '../constants';
+import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
+import { TasksCache } from '../utils/tasks-cache';
 import { DisputeData } from 'opoo-sdk/dist/batching/getBatchDisputeData';
 
 const PAGE_SIZE = 80;
@@ -86,7 +86,6 @@ export class LoopDisputes {
       do {
         try {
           disputeData = await this.listDisputes(sdk, i, PAGE_SIZE);
-          console.log('got requestIds', i * PAGE_SIZE, PAGE_SIZE);
           // If the data is correct we can break the loop
           break;
         } catch (error) {

@@ -1,8 +1,8 @@
 import { AutomateSDK, TaskTransaction } from '@gelatonetwork/automate-sdk';
-import config from './config/config';
+import config from '../config/config';
 import hre from 'hardhat';
 import { abi as IOracleAbi } from 'opoo-core-abi/abi/IOracle.json';
-import { address } from './constants';
+import { address } from '../constants';
 
 export class ResolveDispute {
   public async automateTask(disputeId: string): Promise<TaskTransaction> {

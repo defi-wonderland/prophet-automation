@@ -1,4 +1,4 @@
-import { LoopDisputes } from '../loop-disputes';
+import { LoopDisputes } from '../helpers/loop-disputes';
 
 (async () => {
   const loopDisputes = new LoopDisputes();

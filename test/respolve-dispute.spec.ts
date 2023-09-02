@@ -1,4 +1,4 @@
-import { ResolveDispute } from '../src/resolve-dispute';
+import { ResolveDispute } from '../src/gelato-task-creation/resolve-dispute';
 
 describe('ResolveDispute', () => {
   it.only('resolve dispute', async () => {

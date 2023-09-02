@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { LoopDisputes } from '../src/loop-disputes';
+import { LoopDisputes } from '../src/helpers/loop-disputes';
 import { address } from '../src/constants';
 
 describe('LoopDisputes', () => {
