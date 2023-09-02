@@ -48,7 +48,7 @@ export class LoopDisputes {
               console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
 
               // 2- Create the task in gelato
-              // disputeResolver.automateTask(address.deployed.ORACLE, dispute.disputeId);
+              // this.disputeResolver.automateTask(dispute.disputeId);
               // If the task was successfully submitted to gelato we can set the cache
               console.log(
                 `task created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}, saving to cache`
@@ -68,7 +68,6 @@ export class LoopDisputes {
   public async loopDisputes() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
-
     const sdk = new OpooSDK(runner, address.deployed.ORACLE);
 
     // First we have to get the total requests count
