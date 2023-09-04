@@ -2248,7 +2248,7 @@
   dependencies:
     "@types/chai" "*"
 
-"@types/chai@*", "@types/chai@4.3.5":
+"@types/chai@*":
   version "4.3.5"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.5.tgz#ae69bcbb1bebb68c4ac0b11e9d8ed04526b3562b"
   integrity sha512-mEo1sAde+UCE6b2hxn332f1g1E8WfYRu6p5SvTKr2ZKC1f7gFJXk4h5PyGP9Dt6gCaG8y8XhwnXWC6Iy2cmBng==
@@ -3830,7 +3830,7 @@ ethereumjs-util@^6.0.0, ethereumjs-util@^6.2.1:
     ethjs-util "0.1.6"
     rlp "^2.2.3"
 
-"ethers-v6@npm:ethers@6.7.0", ethers@6.7.0, "ethers@npm:ethers@6.7.0":
+"ethers-v6@npm:ethers@6.7.0", ethers@6.7.0:
   version "6.7.0"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.7.0.tgz#0f772c31a9450de28aa518b181c8cb269bbe7fd1"
   integrity sha512-pxt5hK82RNwcTX2gOZP81t6qVPVspnkpeivwEgQuK9XUvbNtghBnT8GNIb/gPh+WnVSfi8cXC9XlfT8sqc6D6w==
@@ -6496,10 +6496,10 @@ opoo-core-abi@0.0.0-c728680e:
     forge-std "https://github.com/foundry-rs/forge-std.git#e8a047e3f40f13fa37af6fe14e6e06283d9a060e"
     solmate "https://github.com/transmissions11/solmate.git#bfc9c25865a274a7827fea5abf6e4fb64fc64e6c"
 
-opoo-sdk@0.0.0-5ee8e49d:
-  version "0.0.0-5ee8e49d"
-  resolved "https://registry.yarnpkg.com/opoo-sdk/-/opoo-sdk-0.0.0-5ee8e49d.tgz#75e415c71aa53e2125bc6fadd64738f9991d810f"
-  integrity sha512-hE3P+wnQhRApdX4z0IEXWCwhMsEG0h7U09VQGdwIGJOxgwuY1IXCH3e0A8qxRtf7hE00I7c5h6flbv+cmhOFGg==
+opoo-sdk@0.0.0-6941a053:
+  version "0.0.0-6941a053"
+  resolved "https://registry.yarnpkg.com/opoo-sdk/-/opoo-sdk-0.0.0-6941a053.tgz#1464731cb503d2a55529c0942f95e626ccc7bb5a"
+  integrity sha512-fcDvgyaJ89hQ3q97MGXOhapLPwVr4emAGDyQRDKtxprq1BepdCAzUO1v+amOPnwA1D0l1MkyH9Z8q+ouE0Fq4Q==
   dependencies:
     "@pinata/sdk" "2.1.0"
     axios "1.4.0"
