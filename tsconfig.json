@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "sourceMap": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "removeComments": true,
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "typeRoots": ["./node_modules/@types"],
+    "moduleResolution": "node"
+  },
+  "files": ["hardhat.config.ts"],
+  "include": ["hardhat", "src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}
