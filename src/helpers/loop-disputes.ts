@@ -1,15 +1,13 @@
 import hre from 'hardhat';
 import { OpooSDK } from 'opoo-sdk';
 import { ContractRunner } from 'ethers-v6';
-import { address } from '../constants';
+import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
 import { DisputeData } from 'opoo-sdk/dist/batching/getBatchDisputeData';
+import { sleep } from '../utils/utils';
 
 const PAGE_SIZE = 80;
-const textColorGreen = '\x1b[32m';
-const textColorReset = '\x1b[0m';
-const TRIES = 5;
 
 export class LoopDisputes {
   private scriptsCache: TasksCache = new TasksCache();
@@ -28,15 +26,17 @@ export class LoopDisputes {
 
         if (status > 0 && status - 1 <= 1) {
           if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
-            console.log(`task already created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}`);
+            console.log(
+              `task already created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}`
+            );
           } else {
             // These are the the disputes that are active or escalated and can be resolved
             console.log(
-              `creating task to resolve disputeId: ${textColorGreen}${
+              `creating task to resolve disputeId: ${TEXT_COLOR_GREEN}${
                 dispute.disputeId
-              }${textColorReset} dispute status: ${textColorGreen}${
+              }${TEXT_COLOR_RESET} dispute status: ${TEXT_COLOR_GREEN}${
                 DisputeStatusMapping[dispute.status]
-              }${textColorReset}`
+              }${TEXT_COLOR_RESET}`
             );
 
             // simulate the task -> create the gelato task -> save to cache the task created
@@ -44,14 +44,14 @@ export class LoopDisputes {
             try {
               console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
               // 1- Simulate
-              const result = await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
+              await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
               console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
 
               // 2- Create the task in gelato
-              // this.disputeResolver.automateTask(dispute.disputeId);
+              this.disputeResolver.automateTask(dispute.disputeId);
               // If the task was successfully submitted to gelato we can set the cache
               console.log(
-                `task created for disputeId: ${textColorGreen}${dispute.disputeId}${textColorReset}, saving to cache`
+                `task created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}, saving to cache`
               );
 
               // 3- Save to cache
@@ -76,11 +76,10 @@ export class LoopDisputes {
     // Then we have to calculate how many call to the oracle to get the requests
     const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
 
-
     // Then we loop over the pages
     for (let i = 0; i < totalCalls; i++) {
       let disputeData: DisputeData[];
-      console.log('getting requestIds', i * PAGE_SIZE, PAGE_SIZE);
+      console.log('getting requests', i * PAGE_SIZE, PAGE_SIZE);
 
       let j = TRIES;
       do {
@@ -89,12 +88,13 @@ export class LoopDisputes {
           // If the data is correct we can break the loop
           break;
         } catch (error) {
-          console.log('error getting requestIds, retrying', error);
+          console.log('error getting requests, retrying', error);
+          await sleep(2000);
         }
 
         j--;
         if (j === 0) {
-          throw new Error('error getting requestIds, service unavailable');
+          throw new Error('error getting requests, service unavailable');
         }
       } while (j > 0);
 

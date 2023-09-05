@@ -15,6 +15,7 @@
     "lint:check": "prettier --check './**' && eslint ./src",
     "lint:fix": "sort-package-json && prettier --write './**' && eslint ./src --fix",
     "scripts:loop-disputes": "ts-node src/scripts/loop-disputes.ts",
+    "scripts:loop-requests": "ts-node src/scripts/loop-requests.ts",
     "test": "cross-env mocha 'test/**/*.spec.ts' --network tenderly --timeout 1000000",
     "test:coverage": "nyc --reporter=lcov --reporter=text mocha 'test/**/*.spec.ts'"
   },
@@ -40,10 +41,9 @@
     "ethers-v6": "npm:ethers@6.7.0",
     "hardhat": "2.13.0",
     "opoo-core-abi": "0.0.0-c728680e",
-    "opoo-sdk": "0.0.0-5ee8e49d"
+    "opoo-sdk": "0.0.0-6941a053"
   },
   "devDependencies": {
-    "@types/chai": "4.3.5",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "10.0.1",
     "@types/node": "20.2.3",
@@ -52,7 +52,7 @@
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "cross-env": "7.0.3",
-    "eslint": "8.40.0",
+    "eslint": "^8.48.0",
     "husky": "8.0.3",
     "lint-staged": "10",
     "mocha": "10.2.0",

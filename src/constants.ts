@@ -47,3 +47,7 @@ export const address = {
     '0xd7ccc603a29fc9af6b25bae13b434e2f66f556aa', // WETH/MAI
   ],
 };
+
+export const TEXT_COLOR_GREEN = '\x1b[32m';
+export const TEXT_COLOR_RESET = '\x1b[0m';
+export const TRIES = 5;
