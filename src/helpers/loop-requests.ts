@@ -23,7 +23,7 @@ export class LoopRequests {
       let created = false;
       const finalized = data.request.finalizedAt != 0;
 
-      if (await this.scriptsCache.isFinalizeRequestTaskCreated(data.requestId) || finalized) {
+      if ((await this.scriptsCache.isFinalizeRequestTaskCreated(data.requestId)) || finalized) {
         console.log(
           `task already created or finalized for requestId: ${TEXT_COLOR_GREEN}${data.request.requestId}${TEXT_COLOR_RESET}`
         );
@@ -67,7 +67,7 @@ export class LoopRequests {
             );
 
             // 2- Create the task in gelato
-            this.requestFinalizer.automateTask(data.requestId);
+            // this.requestFinalizer.automateTask(data.requestId);
             // If the task was successfully submitted to gelato we can set the cache
             console.log(
               `task created for requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}, saving to cache`

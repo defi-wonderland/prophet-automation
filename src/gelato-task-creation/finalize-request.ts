@@ -25,7 +25,7 @@ export class FinalizeRequest {
       // address _job, bytes calldata _jobData, address _feeRecipient
       execSelector: oracleContract.interface.getSighash(method),
       //execData?: string;  [address(job), work(uint256 _counter) [_counter], msg.sender]
-      execData: oracleContract.interface.encodeFunctionData('finalize', functionData),
+      execData: oracleContract.interface.encodeFunctionData(method, functionData),
       execAbi: oracleContract.interface.format('json') as string,
       name: name,
       dedicatedMsgSender: false,

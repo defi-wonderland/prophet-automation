@@ -1,6 +1,6 @@
 import { LoopRequests } from '../helpers/loop-requests';
 
 (async () => {
-  const loopDisputes = new LoopRequests();
-  await loopDisputes.loopRequests();
+  const loopRequests = new LoopRequests();
+  await loopRequests.loopRequests();
 })();

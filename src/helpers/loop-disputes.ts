@@ -26,7 +26,9 @@ export class LoopDisputes {
 
         if (status > 0 && status - 1 <= 1) {
           if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
-            console.log(`task already created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}`);
+            console.log(
+              `task already created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}`
+            );
           } else {
             // These are the the disputes that are active or escalated and can be resolved
             console.log(
