@@ -1,7 +1,7 @@
 {
   "name": "prophet-automation",
   "version": "1.0.0",
-  "description": "Optimism Oracle automation tool",
+  "description": "Prophet automation tool",
   "repository": "git@github.com:defi-wonderland/prophet-automation-private.git",
   "license": "MIT",
   "author": "Wonderland",
