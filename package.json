@@ -1,8 +1,8 @@
 {
-  "name": "opoo-automation",
+  "name": "prophet-automation",
   "version": "1.0.0",
   "description": "Optimism Oracle automation tool",
-  "repository": "git@github.com:defi-wonderland/opoo-automation-private.git",
+  "repository": "git@github.com:defi-wonderland/prophet-automation-private.git",
   "license": "MIT",
   "author": "Wonderland",
   "main": "dist/index.js",
@@ -30,7 +30,7 @@
   },
   "resolutions": {
     "@nomiclabs/hardhat-ethers/ethers": "5.7.2",
-    "opoo-sdk/ethers": "6.7.0"
+    "prophet-sdk/ethers": "6.7.0"
   },
   "dependencies": {
     "@ethersproject/providers": "5.7.2",
@@ -40,8 +40,7 @@
     "dotenv": "16.3.1",
     "ethers-v6": "npm:ethers@6.7.0",
     "hardhat": "2.13.0",
-    "opoo-core-abi": "0.0.0-c728680e",
-    "opoo-sdk": "0.0.0-6941a053"
+    "prophet-sdk": "0.0.0-a6edc18d"
   },
   "devDependencies": {
     "@types/chai-as-promised": "7.1.5",

@@ -1,5 +1,5 @@
 import hre from 'hardhat';
-import { OpooSDK, RequestFullData } from 'opoo-sdk';
+import { ProphetSDK, RequestFullData } from 'prophet-sdk';
 import { ContractRunner } from 'ethers-v6';
 import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { TasksCache } from '../utils/tasks-cache';
@@ -12,12 +12,12 @@ export class LoopRequests {
   private scriptsCache: TasksCache = new TasksCache();
   private requestFinalizer = new FinalizeRequest();
 
-  async listRequests(sdk: OpooSDK, i: number, PAGE_SIZE: number): Promise<RequestFullData[]> {
+  async listRequests(sdk: ProphetSDK, i: number, PAGE_SIZE: number): Promise<RequestFullData[]> {
     const requests = await sdk.batching.listRequests(i * PAGE_SIZE, PAGE_SIZE);
     return requests;
   }
 
-  async processRequestData(sdk: OpooSDK, requestData: RequestFullData[]) {
+  async processRequestData(sdk: ProphetSDK, requestData: RequestFullData[]) {
     console.log('processing request data', requestData.length);
     for (const data of requestData) {
       let created = false;
@@ -89,7 +89,7 @@ export class LoopRequests {
   public async loopRequests() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
-    const sdk = new OpooSDK(runner, address.deployed.ORACLE);
+    const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
 
     // First we have to get the total requests count
     const totalRequests = await sdk.helpers.totalRequestCount();
