@@ -1,10 +1,10 @@
 import hre from 'hardhat';
-import { OpooSDK } from 'opoo-sdk';
+import { ProphetSDK } from 'prophet-sdk';
 import { ContractRunner } from 'ethers-v6';
 import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
-import { DisputeData } from 'opoo-sdk/dist/batching/getBatchDisputeData';
+import { DisputeData } from 'prophet-sdk/dist/batching/getBatchDisputeData';
 import { sleep } from '../utils/utils';
 
 const PAGE_SIZE = 80;
@@ -13,12 +13,12 @@ export class LoopDisputes {
   private scriptsCache: TasksCache = new TasksCache();
   private disputeResolver = new ResolveDispute();
 
-  async listDisputes(sdk: OpooSDK, i: number, PAGE_SIZE: number): Promise<DisputeData[]> {
+  async listDisputes(sdk: ProphetSDK, i: number, PAGE_SIZE: number): Promise<DisputeData[]> {
     const disputes = await sdk.batching.listDisputes(i * PAGE_SIZE, PAGE_SIZE);
     return disputes;
   }
 
-  async processDisputeData(sdk: OpooSDK, disputeData: DisputeData[]) {
+  async processDisputeData(sdk: ProphetSDK, disputeData: DisputeData[]) {
     console.log('processing dispute data', disputeData.length);
     for (const data of disputeData) {
       for (const dispute of data.disputes) {
@@ -68,7 +68,7 @@ export class LoopDisputes {
   public async loopDisputes() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
-    const sdk = new OpooSDK(runner, address.deployed.ORACLE);
+    const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
 
     // First we have to get the total requests count
     const totalRequests = await sdk.helpers.totalRequestCount();

@@ -1,1 +1,1 @@
-# opoo-automation-private
+# prophet-automation-private

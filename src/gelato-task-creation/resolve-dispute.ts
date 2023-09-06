@@ -1,7 +1,7 @@
 import { AutomateSDK, TaskTransaction } from '@gelatonetwork/automate-sdk';
 import config from '../config/config';
 import hre from 'hardhat';
-import { abi as IOracleAbi } from 'opoo-core-abi/abi/IOracle.json';
+import { abi as IOracleAbi } from 'prophet-core-abi/abi/IOracle.json';
 import { address } from '../constants';
 
 export class ResolveDispute {

@@ -198,9 +198,9 @@
     js-tokens "^4.0.0"
 
 "@babel/parser@^7.22.15":
-  version "7.22.15"
-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.22.15.tgz#d34592bfe288a32e741aa0663dbc4829fcd55160"
-  integrity sha512-RWmQ/sklUN9BvGGpCDgSubhHWfAx24XDTDObup4ffvxaYsptOg2P3KG0j+1eWKLxpkX0j0uHxmpq2Z1SP/VhxA==
+  version "7.22.16"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-7.22.16.tgz#180aead7f247305cce6551bea2720934e2fa2c95"
+  integrity sha512-+gPfKv8UWeKKeJTUxe59+OobVcrYHETCsORl61EmSkmgymguYk/X5bp7GuUIXaFsc6y++v8ZxPsLSSuujqDphA==
 
 "@babel/template@^7.22.15", "@babel/template@^7.22.5":
   version "7.22.15"
@@ -6469,40 +6469,6 @@ onetime@^6.0.0:
   dependencies:
     mimic-fn "^4.0.0"
 
-opoo-core-abi@0.0.0-42bd61ad:
-  version "0.0.0-42bd61ad"
-  resolved "https://registry.yarnpkg.com/opoo-core-abi/-/opoo-core-abi-0.0.0-42bd61ad.tgz#90cd9292712982134654c4f2709662a8c5aeafe9"
-  integrity sha512-DvwgH/v3zg1JLTAJg4oYPzQQ8n7kkWAEEioqa2WX9LZh1a3PmlLBZe6dxdccF9khg9a0q7whZ/HLZcNKzyCBuA==
-  dependencies:
-    "@defi-wonderland/solidity-utils" "0.0.0-3e9c8e8b"
-    ds-test "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0"
-    forge-std "https://github.com/foundry-rs/forge-std.git#e8a047e3f40f13fa37af6fe14e6e06283d9a060e"
-    solmate "https://github.com/transmissions11/solmate.git#bfc9c25865a274a7827fea5abf6e4fb64fc64e6c"
-
-opoo-core-abi@0.0.0-c728680e:
-  version "0.0.0-c728680e"
-  resolved "https://registry.yarnpkg.com/opoo-core-abi/-/opoo-core-abi-0.0.0-c728680e.tgz#7991184c693bdc372a3d0baa218c16156422d077"
-  integrity sha512-wXT9av+rSqEdd2D/jad0hT79/PWLeQIZf5b6IaoDj/rl0JlRVrjyyKOySMocRp/UjpN9SDoCSAfwASMjJ9X4ew==
-  dependencies:
-    "@defi-wonderland/solidity-utils" "0.0.0-3e9c8e8b"
-    ds-test "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0"
-    forge-std "https://github.com/foundry-rs/forge-std.git#e8a047e3f40f13fa37af6fe14e6e06283d9a060e"
-    solmate "https://github.com/transmissions11/solmate.git#bfc9c25865a274a7827fea5abf6e4fb64fc64e6c"
-
-opoo-sdk@0.0.0-6941a053:
-  version "0.0.0-6941a053"
-  resolved "https://registry.yarnpkg.com/opoo-sdk/-/opoo-sdk-0.0.0-6941a053.tgz#1464731cb503d2a55529c0942f95e626ccc7bb5a"
-  integrity sha512-fcDvgyaJ89hQ3q97MGXOhapLPwVr4emAGDyQRDKtxprq1BepdCAzUO1v+amOPnwA1D0l1MkyH9Z8q+ouE0Fq4Q==
-  dependencies:
-    "@pinata/sdk" "2.1.0"
-    axios "1.4.0"
-    cids "1.1.9"
-    dotenv "16.3.1"
-    ethers "6.7.0"
-    ipfs-core "0.18.1"
-    opoo-core-abi "0.0.0-42bd61ad"
-    pinata-upload-cli "1.1.0"
-
 optionator@^0.9.3:
   version "0.9.3"
   resolved "https://registry.yarnpkg.com/optionator/-/optionator-0.9.3.tgz#007397d44ed1872fdc6ed31360190f81814e2c64"
@@ -6860,6 +6826,30 @@ proper-lockfile@^4.0.0:
     graceful-fs "^4.2.4"
     retry "^0.12.0"
     signal-exit "^3.0.2"
+
+prophet-core-abi@0.0.0-51d66dc7:
+  version "0.0.0-51d66dc7"
+  resolved "https://registry.yarnpkg.com/prophet-core-abi/-/prophet-core-abi-0.0.0-51d66dc7.tgz#b969a6f1aa1b6d31cd70ac81d7dc40a56687e980"
+  integrity sha512-skOXB/rCq9ZZOWogVhvzK5gulB/RVCWqOcJg2GY7AKF6VgVISraz8+I5A5NQu6QfN7NMhlUGNS3QZGDP85xByA==
+  dependencies:
+    "@defi-wonderland/solidity-utils" "0.0.0-3e9c8e8b"
+    ds-test "https://github.com/dapphub/ds-test.git#e282159d5170298eb2455a6c05280ab5a73a4ef0"
+    forge-std "https://github.com/foundry-rs/forge-std.git#e8a047e3f40f13fa37af6fe14e6e06283d9a060e"
+    solmate "https://github.com/transmissions11/solmate.git#bfc9c25865a274a7827fea5abf6e4fb64fc64e6c"
+
+prophet-sdk@0.0.0-a6edc18d:
+  version "0.0.0-a6edc18d"
+  resolved "https://registry.yarnpkg.com/prophet-sdk/-/prophet-sdk-0.0.0-a6edc18d.tgz#1cb0d1c0ae2c65b01f8d0aa2fca2d140b10fbb83"
+  integrity sha512-x3bCL5o2E5ZeDdTANt2xhJShWrU4/kixgdCahaIo8iRfGkkpqakXWmP5nW+sRDN7tHHXIbygwK+Inuuh4xwKhg==
+  dependencies:
+    "@pinata/sdk" "2.1.0"
+    axios "1.4.0"
+    cids "1.1.9"
+    dotenv "16.3.1"
+    ethers "6.7.0"
+    ipfs-core "0.18.1"
+    pinata-upload-cli "1.1.0"
+    prophet-core-abi "0.0.0-51d66dc7"
 
 protobufjs@^6.11.2:
   version "6.11.4"
@@ -8008,9 +7998,9 @@ ws@^7.4.6:
   integrity sha512-F+P9Jil7UiSKSkppIiD94dN07AwvFixvLIj1Og1Rl9GGMuNipJnV9JzjD6XuqmAeiswGvUmNLjr5cFuXwNS77Q==
 
 ws@^8.12.1, ws@^8.4.0:
-  version "8.13.0"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-8.13.0.tgz#9a9fb92f93cf41512a0735c8f4dd09b8a1211cd0"
-  integrity sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==
+  version "8.14.0"
+  resolved "https://registry.yarnpkg.com/ws/-/ws-8.14.0.tgz#6c5792c5316dc9266ba8e780433fc45e6680aecd"
+  integrity sha512-WR0RJE9Ehsio6U4TuM+LmunEsjQ5ncHlw4sn9ihD6RoJKZrVyH9FWV3dmnwu8B2aNib1OvG2X6adUCyFpQyWcg==
 
 ws@~8.11.0:
   version "8.11.0"
