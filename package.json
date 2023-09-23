@@ -14,8 +14,8 @@
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "lint:check": "prettier --check './**' && eslint ./src",
     "lint:fix": "sort-package-json && prettier --write './**' && eslint ./src --fix",
-    "scripts:loop-disputes": "ts-node src/scripts/loop-disputes.ts",
-    "scripts:loop-requests": "ts-node src/scripts/loop-requests.ts",
+    "scripts:resolve-disputes": "ts-node src/scripts/resolve-disputes.ts",
+    "scripts:finalize-requests": "ts-node src/scripts/finalize-requests.ts",
     "test": "cross-env mocha 'test/**/*.spec.ts' --network tenderly --timeout 1000000",
     "test:coverage": "nyc --reporter=lcov --reporter=text mocha 'test/**/*.spec.ts'"
   },
