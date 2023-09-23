@@ -1,8 +1,8 @@
 import { expect } from 'chai';
-import { LoopDisputes } from '../src/helpers/loop-disputes';
+import { ResolveDisputes } from '../src/helpers/resolve-disputes';
 import { address } from '../src/constants';
 
-describe('LoopDisputes', () => {
+describe('ResolveDisputes', () => {
   it.only('loop disputes', async () => {
     // TODO create tests
   });

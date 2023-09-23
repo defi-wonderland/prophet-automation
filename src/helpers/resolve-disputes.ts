@@ -9,7 +9,7 @@ import { sleep } from '../utils/utils';
 
 const PAGE_SIZE = 80;
 
-export class LoopDisputes {
+export class ResolveDisputes {
   private scriptsCache: TasksCache = new TasksCache();
   private disputeResolver = new ResolveDispute();
 
@@ -65,7 +65,7 @@ export class LoopDisputes {
     }
   }
 
-  public async loopDisputes() {
+  public async run() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
     const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
