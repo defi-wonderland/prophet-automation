@@ -1,9 +1,11 @@
 {
   "root": true,
+  "env": {
+    "node": true
+  },
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint"],
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended"],
-  "env": { "node": true },
   "rules": {
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -21,5 +23,8 @@
     "@typescript-eslint/no-unused-vars": "warn", // Warn about unused variables
     "no-undef": "error", // Warn about undeclared variables
     "eol-last": ["error", "always"] // Require a new line at the end of every file
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020
   }
 }
