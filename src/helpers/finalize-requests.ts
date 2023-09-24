@@ -8,7 +8,7 @@ import { sleep } from '../utils/utils';
 
 const PAGE_SIZE = 6;
 
-export class LoopRequests {
+export class FinalizeRequests {
   private scriptsCache: TasksCache = new TasksCache();
   private requestFinalizer = new FinalizeRequest();
 
@@ -86,7 +86,7 @@ export class LoopRequests {
     }
   }
 
-  public async loopRequests() {
+  public async run() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
     const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
