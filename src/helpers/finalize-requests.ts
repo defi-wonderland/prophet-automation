@@ -17,8 +17,11 @@ export class FinalizeRequests {
     return requests;
   }
 
-  async processRequestData(sdk: ProphetSDK, requestData: RequestFullData[]) {
+  async processRequestData(sdk: ProphetSDK, requestData: RequestFullData[], startingIndex: number) {
     console.log('processing request data', requestData.length);
+    let firstNonFinalizedRequest = Number.MAX_SAFE_INTEGER;
+    let index = startingIndex;
+
     for (const data of requestData) {
       let created = false;
       const finalized = data.request.finalizedAt != 0;
@@ -77,35 +80,53 @@ export class FinalizeRequests {
             await this.scriptsCache.setFinalizeRequestTaskCreated(data.requestId);
             break;
           } catch (error) {
+            firstNonFinalizedRequest = Math.min(firstNonFinalizedRequest, index);
             console.log(
               `error simulating finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}`
             );
           }
         }
       }
+      ++index;
     }
+
+    if (firstNonFinalizedRequest != Number.MAX_SAFE_INTEGER) {
+      console.log('saving firstNonFinalizedRequest', firstNonFinalizedRequest);
+      await this.scriptsCache.setFirstNonFinalizedRequestIndex(firstNonFinalizedRequest);
+    }
+
+    console.log('firstNonFinalizedRequest', firstNonFinalizedRequest);
   }
 
   public async run() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
+
     const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
+    let firstNonFinalizedRequest = await this.scriptsCache.getFirstNonFinalizedRequestIndex();
+    firstNonFinalizedRequest = firstNonFinalizedRequest ? firstNonFinalizedRequest : 0;
+
+    console.log('firstNonFinalizedRequest', firstNonFinalizedRequest);
 
     // First we have to get the total requests count
     const totalRequests = await sdk.helpers.totalRequestCount();
+    console.log('totalRequests', totalRequests);
 
     // Then we have to calculate how many call to the oracle to get the requests
     const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
+    console.log('totalCalls', totalCalls);
+    const startingPage = Math.floor(firstNonFinalizedRequest / PAGE_SIZE);
+    console.log('startingPage', startingPage);
+
+    let requestsData: RequestFullData[] = [];
 
     // Then we loop over the pages
-    for (let i = 0; i < totalCalls; i++) {
-      let requestsData: RequestFullData[];
+    for (let i = startingPage; i < totalCalls; i++) {
       console.log('getting requests', i * PAGE_SIZE, PAGE_SIZE);
-
       let j = TRIES;
       do {
         try {
-          requestsData = await this.listRequests(sdk, i, PAGE_SIZE);
+          requestsData = [...await this.listRequests(sdk, i, PAGE_SIZE)];
           // If the data is correct we can break the loop
           break;
         } catch (error) {
@@ -118,8 +139,8 @@ export class FinalizeRequests {
           throw new Error('error getting requests, service unavailable');
         }
       } while (j > 0);
-
-      await this.processRequestData(sdk, requestsData);
     }
+
+    await this.processRequestData(sdk, requestsData, PAGE_SIZE * startingPage);
   }
 }

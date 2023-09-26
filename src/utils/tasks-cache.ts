@@ -2,6 +2,8 @@ import cacache from 'cacache';
 
 const RESOLVE_DISPUTE_PREFIX = 'resolve_dispute_';
 const FINALIZE_REQUEST_PREFIX = 'finalize_request_';
+const FIRST_NON_FINALIZED_REQUEST = 'first_non_finalized_request';
+const FIRST_NON_RESOLVED_DISPUTE_REQUEST = 'first_non_resolved_dispute_request';
 
 const cachePath = './tasks-cache';
 
@@ -51,6 +53,42 @@ export class TasksCache implements ITaskCache {
       return false;
     }
   }
+
+  async setFirstNonFinalizedRequestIndex(index: number): Promise<void> {
+    try {
+      await cacache.put(cachePath, FIRST_NON_FINALIZED_REQUEST, index.toString());
+      console.info(`Saved value "${index}" with key "${FIRST_NON_FINALIZED_REQUEST}" to cache.`);
+    } catch (error) {
+      console.error('Error saving key-value pair:', error);
+    }
+  }
+
+  async getFirstNonFinalizedRequestIndex(): Promise<number | null> {
+    try {
+      const cachedValue = await cacache.get(cachePath, FIRST_NON_FINALIZED_REQUEST);
+      return cachedValue.data.toString().toNumber();
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async setFirstNonResolvedDisputeRequestIndex(index: number): Promise<void> {
+    try {
+      await cacache.put(cachePath, FIRST_NON_FINALIZED_REQUEST, index.toString());
+      console.info(`Saved value "${index}" with key "${FIRST_NON_RESOLVED_DISPUTE_REQUEST}" to cache.`);
+    } catch (error) {
+      console.error('Error saving key-value pair:', error);
+    }
+  }
+  
+  async getFirstNonResolvedDisputeRequestIndex(): Promise<number | null> {
+    try {
+      const cachedValue = await cacache.get(cachePath, FIRST_NON_RESOLVED_DISPUTE_REQUEST);
+      return cachedValue.data.toString().toNumber();
+    } catch (error) {
+      return null;
+    }
+  }
 }
 
 interface ITaskCache {
@@ -60,4 +98,8 @@ interface ITaskCache {
   setFinalizeRequestTaskCreated(requestId: string, responseId: string): Promise<void>;
   isFinalizeRequestTaskCreated(requestId: string): Promise<boolean>;
   isFinalizeRequestTaskCreated(requestId: string, responseId: string): Promise<boolean>;
+  setFirstNonFinalizedRequestIndex(index: number): Promise<void>;
+  getFirstNonFinalizedRequestIndex(): Promise<number | null>;
+  setFirstNonResolvedDisputeRequestIndex(index: number): Promise<void>;
+  getFirstNonResolvedDisputeRequestIndex(): Promise<number | null>;
 }

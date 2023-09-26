@@ -18,8 +18,12 @@ export class ResolveDisputes {
     return disputes;
   }
 
-  async processDisputeData(sdk: ProphetSDK, disputeData: DisputeData[]) {
+  async processDisputeData(sdk: ProphetSDK, disputeData: DisputeData[], startingIndex: number) {
     console.log('processing dispute data', disputeData.length);
+
+    let index = startingIndex;
+    let firstNonResolvedDisputeIndex = Number.MAX_SAFE_INTEGER;
+
     for (const data of disputeData) {
       for (const dispute of data.disputes) {
         const status = Number(dispute.status);
@@ -57,18 +61,32 @@ export class ResolveDisputes {
               // 3- Save to cache
               await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
             } catch (error) {
+              firstNonResolvedDisputeIndex = Math.min(firstNonResolvedDisputeIndex, index);
+              // TODO: delete cache, altought this implementation works cache does not make sense in disputes :(
+              // because new disputes can always be created
               console.log('error simulating resolve dispute with disputeId: ', dispute.disputeId);
             }
           }
         }
       }
+      ++index;
     }
+
+    if (firstNonResolvedDisputeIndex != Number.MAX_SAFE_INTEGER) {
+      console.log('saving firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
+      await this.scriptsCache.setFirstNonFinalizedRequestIndex(firstNonResolvedDisputeIndex);
+    }
+
+    console.log('firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
   }
 
   public async run() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
     const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
+    
+    let firstNonResolvedDispute = await this.scriptsCache.getFirstNonResolvedDisputeRequestIndex();
+    firstNonResolvedDispute = firstNonResolvedDispute ? firstNonResolvedDispute : 0;
 
     // First we have to get the total requests count
     const totalRequests = await sdk.helpers.totalRequestCount();
@@ -76,15 +94,18 @@ export class ResolveDisputes {
     // Then we have to calculate how many call to the oracle to get the requests
     const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
 
+    let disputeData: DisputeData[] = [];
+
+    const startingPage = Math.floor(firstNonResolvedDispute / PAGE_SIZE);
+
     // Then we loop over the pages
-    for (let i = 0; i < totalCalls; i++) {
-      let disputeData: DisputeData[];
+    for (let i = startingPage; i < totalCalls; i++) {
       console.log('getting requests', i * PAGE_SIZE, PAGE_SIZE);
 
       let j = TRIES;
       do {
         try {
-          disputeData = await this.listDisputes(sdk, i, PAGE_SIZE);
+          disputeData = [...await this.listDisputes(sdk, i, PAGE_SIZE)];
           // If the data is correct we can break the loop
           break;
         } catch (error) {
@@ -97,9 +118,9 @@ export class ResolveDisputes {
           throw new Error('error getting requests, service unavailable');
         }
       } while (j > 0);
-
-      await this.processDisputeData(sdk, disputeData);
     }
+
+    await this.processDisputeData(sdk, disputeData, PAGE_SIZE * startingPage);
   }
 }
 
