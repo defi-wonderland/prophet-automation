@@ -80,7 +80,7 @@ export class TasksCache implements ITaskCache {
       console.error('Error saving key-value pair:', error);
     }
   }
-  
+
   async getFirstNonResolvedDisputeRequestIndex(): Promise<number | null> {
     try {
       const cachedValue = await cacache.get(cachePath, FIRST_NON_RESOLVED_DISPUTE_REQUEST);

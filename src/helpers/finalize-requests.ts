@@ -126,7 +126,7 @@ export class FinalizeRequests {
       let j = TRIES;
       do {
         try {
-          requestsData = [...await this.listRequests(sdk, i, PAGE_SIZE)];
+          requestsData = [...(await this.listRequests(sdk, i, PAGE_SIZE))];
           // If the data is correct we can break the loop
           break;
         } catch (error) {

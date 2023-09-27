@@ -28,6 +28,10 @@ export class ResolveDisputes {
       for (const dispute of data.disputes) {
         const status = Number(dispute.status);
 
+        if (status > 0 && status - 1 <= 2) {
+          firstNonResolvedDisputeIndex = Math.min(firstNonResolvedDisputeIndex, index);
+        }
+
         if (status > 0 && status - 1 <= 1) {
           if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
             console.log(
@@ -44,7 +48,6 @@ export class ResolveDisputes {
             );
 
             // simulate the task -> create the gelato task -> save to cache the task created
-
             try {
               console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
               // 1- Simulate
@@ -61,9 +64,6 @@ export class ResolveDisputes {
               // 3- Save to cache
               await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
             } catch (error) {
-              firstNonResolvedDisputeIndex = Math.min(firstNonResolvedDisputeIndex, index);
-              // TODO: delete cache, altought this implementation works cache does not make sense in disputes :(
-              // because new disputes can always be created
               console.log('error simulating resolve dispute with disputeId: ', dispute.disputeId);
             }
           }
@@ -84,7 +84,7 @@ export class ResolveDisputes {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
     const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
-    
+
     let firstNonResolvedDispute = await this.scriptsCache.getFirstNonResolvedDisputeRequestIndex();
     firstNonResolvedDispute = firstNonResolvedDispute ? firstNonResolvedDispute : 0;
 
@@ -105,7 +105,7 @@ export class ResolveDisputes {
       let j = TRIES;
       do {
         try {
-          disputeData = [...await this.listDisputes(sdk, i, PAGE_SIZE)];
+          disputeData = [...(await this.listDisputes(sdk, i, PAGE_SIZE))];
           // If the data is correct we can break the loop
           break;
         } catch (error) {
