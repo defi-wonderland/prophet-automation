@@ -66,7 +66,7 @@ export class TasksCache implements ITaskCache {
   async getFirstNonFinalizedRequestIndex(): Promise<number | null> {
     try {
       const cachedValue = await cacache.get(cachePath, FIRST_NON_FINALIZED_REQUEST);
-      return cachedValue.data.toString().toNumber();
+      return Number(cachedValue.data.toString());
     } catch (error) {
       return null;
     }
@@ -74,7 +74,7 @@ export class TasksCache implements ITaskCache {
 
   async setFirstNonResolvedDisputeRequestIndex(index: number): Promise<void> {
     try {
-      await cacache.put(cachePath, FIRST_NON_FINALIZED_REQUEST, index.toString());
+      await cacache.put(cachePath, FIRST_NON_RESOLVED_DISPUTE_REQUEST, index.toString());
       console.info(`Saved value "${index}" with key "${FIRST_NON_RESOLVED_DISPUTE_REQUEST}" to cache.`);
     } catch (error) {
       console.error('Error saving key-value pair:', error);
@@ -84,7 +84,7 @@ export class TasksCache implements ITaskCache {
   async getFirstNonResolvedDisputeRequestIndex(): Promise<number | null> {
     try {
       const cachedValue = await cacache.get(cachePath, FIRST_NON_RESOLVED_DISPUTE_REQUEST);
-      return cachedValue.data.toString().toNumber();
+      return Number(cachedValue.data.toString());
     } catch (error) {
       return null;
     }

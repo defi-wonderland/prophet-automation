@@ -1,10 +1,10 @@
 import hre from 'hardhat';
-import { ProphetSDK } from 'prophet-sdk';
+import { ProphetSDK } from '@defi-wonderland/prophet-sdk';
 import { ContractRunner } from 'ethers-v6';
 import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
-import { DisputeData } from 'prophet-sdk/dist/batching/getBatchDisputeData';
+import { DisputeData } from '@defi-wonderland/prophet-sdk/dist/batching/getBatchDisputeData';
 import { sleep } from '../utils/utils';
 
 const PAGE_SIZE = 80;
@@ -28,7 +28,8 @@ export class ResolveDisputes {
       for (const dispute of data.disputes) {
         const status = Number(dispute.status);
 
-        if (status > 0 && status - 1 <= 2) {
+        if (!data.isFinalized && status < 3) {
+          // If the request is not finalized and can have a dispute in the future or already has a dispute
           firstNonResolvedDisputeIndex = Math.min(firstNonResolvedDisputeIndex, index);
         }
 
@@ -74,7 +75,7 @@ export class ResolveDisputes {
 
     if (firstNonResolvedDisputeIndex != Number.MAX_SAFE_INTEGER) {
       console.log('saving firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
-      await this.scriptsCache.setFirstNonFinalizedRequestIndex(firstNonResolvedDisputeIndex);
+      await this.scriptsCache.setFirstNonResolvedDisputeRequestIndex(firstNonResolvedDisputeIndex);
     }
 
     console.log('firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
@@ -87,6 +88,7 @@ export class ResolveDisputes {
 
     let firstNonResolvedDispute = await this.scriptsCache.getFirstNonResolvedDisputeRequestIndex();
     firstNonResolvedDispute = firstNonResolvedDispute ? firstNonResolvedDispute : 0;
+    console.log('firstNonResolvedDispute', firstNonResolvedDispute);
 
     // First we have to get the total requests count
     const totalRequests = await sdk.helpers.totalRequestCount();
@@ -94,18 +96,26 @@ export class ResolveDisputes {
     // Then we have to calculate how many call to the oracle to get the requests
     const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
 
-    let disputeData: DisputeData[] = [];
+    let disputesData: DisputeData[] = [];
 
     const startingPage = Math.floor(firstNonResolvedDispute / PAGE_SIZE);
 
     // Then we loop over the pages
     for (let i = startingPage; i < totalCalls; i++) {
-      console.log('getting requests', i * PAGE_SIZE, PAGE_SIZE);
+      console.log('getting requests', i * PAGE_SIZE, PAGE_SIZE * i + PAGE_SIZE);
 
       let j = TRIES;
       do {
         try {
-          disputeData = [...(await this.listDisputes(sdk, i, PAGE_SIZE))];
+          disputesData = [...disputesData, ...(await this.listDisputes(sdk, i, PAGE_SIZE))];
+
+          if (firstNonResolvedDispute >= i * PAGE_SIZE && firstNonResolvedDispute <= i * PAGE_SIZE + PAGE_SIZE) {
+            if (firstNonResolvedDispute > PAGE_SIZE) {
+              disputesData = disputesData.slice(firstNonResolvedDispute - PAGE_SIZE * i, disputesData.length);
+            } else {
+              disputesData = disputesData.slice(firstNonResolvedDispute, disputesData.length);
+            }
+          }
           // If the data is correct we can break the loop
           break;
         } catch (error) {
@@ -120,7 +130,8 @@ export class ResolveDisputes {
       } while (j > 0);
     }
 
-    await this.processDisputeData(sdk, disputeData, PAGE_SIZE * startingPage);
+    disputesData = disputesData.slice(0, Number(totalRequests) - firstNonResolvedDispute);
+    await this.processDisputeData(sdk, disputesData, firstNonResolvedDispute);
   }
 }
 

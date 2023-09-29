@@ -33,14 +33,14 @@
     "prophet-sdk/ethers": "6.7.0"
   },
   "dependencies": {
+    "@defi-wonderland/prophet-sdk": "0.0.0-bfcf3bba",
     "@ethersproject/providers": "5.7.2",
     "@gelatonetwork/automate-sdk": "2.14.0",
     "@nomiclabs/hardhat-ethers": "2.2.3",
     "cacache": "18.0.0",
     "dotenv": "16.3.1",
     "ethers-v6": "npm:ethers@6.7.0",
-    "hardhat": "2.13.0",
-    "prophet-sdk": "0.0.0-a6edc18d"
+    "hardhat": "2.13.0"
   },
   "devDependencies": {
     "@types/chai-as-promised": "7.1.5",
