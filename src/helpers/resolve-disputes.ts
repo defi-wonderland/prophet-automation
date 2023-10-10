@@ -1,20 +1,18 @@
 import hre from 'hardhat';
 import { ProphetSDK } from '@defi-wonderland/prophet-sdk';
 import { ContractRunner } from 'ethers-v6';
-import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
+import { DISPUTE_STATUS, PAGE_SIZE, TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
 import { DisputeData } from '@defi-wonderland/prophet-sdk/dist/batching/getBatchDisputeData';
 import { sleep } from '../utils/utils';
 
-const PAGE_SIZE = 80;
-
 export class ResolveDisputes {
   private scriptsCache: TasksCache = new TasksCache();
   private disputeResolver = new ResolveDispute();
 
-  async listDisputes(sdk: ProphetSDK, i: number, PAGE_SIZE: number): Promise<DisputeData[]> {
-    const disputes = await sdk.batching.listDisputes(i * PAGE_SIZE, PAGE_SIZE);
+  private async listDisputes(sdk: ProphetSDK, startIndex: number, amount: number): Promise<DisputeData[]> {
+    const disputes = await sdk.batching.listDisputes(startIndex, amount);
     return disputes;
   }
 
@@ -25,60 +23,61 @@ export class ResolveDisputes {
     let firstNonResolvedDisputeIndex = Number.MAX_SAFE_INTEGER;
 
     for (const data of disputeData) {
-      for (const dispute of data.disputes) {
-        const status = Number(dispute.status);
+      if (!data.isFinalized) {
+        // It could have a dispute in the future since it's not finalized
+        firstNonResolvedDisputeIndex = Math.min(firstNonResolvedDisputeIndex, index);
 
-        if (!data.isFinalized && status < 3) {
-          // If the request is not finalized and can have a dispute in the future or already has a dispute
-          firstNonResolvedDisputeIndex = Math.min(firstNonResolvedDisputeIndex, index);
-        }
+        for (const dispute of data.disputes) {
+          const status = Number(dispute.status);
 
-        if (status > 0 && status - 1 <= 1) {
-          if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
-            console.log(
-              `task already created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}`
-            );
-          } else {
-            // These are the the disputes that are active or escalated and can be resolved
-            console.log(
-              `creating task to resolve disputeId: ${TEXT_COLOR_GREEN}${
-                dispute.disputeId
-              }${TEXT_COLOR_RESET} dispute status: ${TEXT_COLOR_GREEN}${
-                DisputeStatusMapping[dispute.status]
-              }${TEXT_COLOR_RESET}`
-            );
-
-            // simulate the task -> create the gelato task -> save to cache the task created
-            try {
-              console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
-              // 1- Simulate
-              await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
-              console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
-
-              // 2- Create the task in gelato
-              this.disputeResolver.automateTask(dispute.disputeId);
-              // If the task was successfully submitted to gelato we can set the cache
+          if (DISPUTE_STATUS[status] == 'Active' || DISPUTE_STATUS[status] == 'Escalated') {
+            if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
               console.log(
-                `task created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}, saving to cache`
+                `task already created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}`
+              );
+            } else {
+              // These are the the disputes that are active or escalated and can be resolved
+              console.log(
+                `creating task to resolve disputeId: ${TEXT_COLOR_GREEN}${
+                  dispute.disputeId
+                }${TEXT_COLOR_RESET} dispute status: ${TEXT_COLOR_GREEN}${
+                  DISPUTE_STATUS[dispute.status]
+                }${TEXT_COLOR_RESET}`
               );
 
-              // 3- Save to cache
-              await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
-            } catch (error) {
-              console.log('error simulating resolve dispute with disputeId: ', dispute.disputeId);
+              // simulate the task -> create the gelato task -> save to cache the task created
+              try {
+                console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
+                // 1- Simulate
+                await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
+
+                console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
+
+                // 2- Create the task in gelato
+                this.disputeResolver.automateTask(dispute.disputeId);
+
+                // If the task was successfully submitted to gelato we can set the cache
+                console.log(
+                  `task created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}, saving to cache`
+                );
+
+                // 3- Save to cache
+                await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
+              } catch (error) {
+                console.log('error simulating resolve dispute with disputeId: ', dispute.disputeId);
+              }
             }
           }
         }
       }
+
       ++index;
     }
 
-    if (firstNonResolvedDisputeIndex != Number.MAX_SAFE_INTEGER) {
-      console.log('saving firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
-      await this.scriptsCache.setFirstNonResolvedDisputeRequestIndex(firstNonResolvedDisputeIndex);
-    }
-
-    console.log('firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
+    firstNonResolvedDisputeIndex =
+      firstNonResolvedDisputeIndex == Number.MAX_SAFE_INTEGER ? index : firstNonResolvedDisputeIndex;
+    console.log('saving firstNonResolvedDisputeIndex', firstNonResolvedDisputeIndex);
+    await this.scriptsCache.setFirstNonResolvedDisputeRequestIndex(firstNonResolvedDisputeIndex);
   }
 
   public async run() {
@@ -90,24 +89,27 @@ export class ResolveDisputes {
     firstNonResolvedDispute = firstNonResolvedDispute ? firstNonResolvedDispute : 0;
     console.log('firstNonResolvedDispute', firstNonResolvedDispute);
 
-    // First we have to get the total requests count
+    // First get the total requests count
     const totalRequests = await sdk.helpers.totalRequestCount();
 
-    // Then we have to calculate how many call to the oracle to get the requests
+    // Calculate how many call to the oracle to get the requests
     const totalCalls = Math.ceil(Number(totalRequests) / PAGE_SIZE);
 
     let disputesData: DisputeData[] = [];
 
     const startingPage = Math.floor(firstNonResolvedDispute / PAGE_SIZE);
 
-    // Then we loop over the pages
+    // Loop over the pages
     for (let i = startingPage; i < totalCalls; i++) {
-      console.log('getting requests', i * PAGE_SIZE, PAGE_SIZE * i + PAGE_SIZE);
+      const startIndex = i * PAGE_SIZE;
+      console.log('getting requests', startIndex, startIndex + PAGE_SIZE);
 
       let j = TRIES;
       do {
         try {
-          disputesData = [...disputesData, ...(await this.listDisputes(sdk, i, PAGE_SIZE))];
+          disputesData = [...disputesData, ...(await this.listDisputes(sdk, startIndex, PAGE_SIZE))].filter(
+            (data) => data.requestId != address.ZERO
+          );
 
           if (firstNonResolvedDispute >= i * PAGE_SIZE && firstNonResolvedDispute <= i * PAGE_SIZE + PAGE_SIZE) {
             if (firstNonResolvedDispute > PAGE_SIZE) {
@@ -116,7 +118,7 @@ export class ResolveDisputes {
               disputesData = disputesData.slice(firstNonResolvedDispute, disputesData.length);
             }
           }
-          // If the data is correct we can break the loop
+          // If the data is correct break the loop
           break;
         } catch (error) {
           console.log('error getting requests, retrying', error);
@@ -134,12 +136,3 @@ export class ResolveDisputes {
     await this.processDisputeData(sdk, disputesData, firstNonResolvedDispute);
   }
 }
-
-const DisputeStatusMapping: Record<number, string> = {
-  0: 'None',
-  1: 'Active',
-  2: 'Escalated',
-  3: 'Won',
-  4: 'Lost',
-  5: 'NoResolution',
-};
