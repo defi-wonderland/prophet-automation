@@ -1,13 +1,11 @@
 import hre from 'hardhat';
 import { ProphetSDK } from '@defi-wonderland/prophet-sdk';
 import { ContractRunner } from 'ethers-v6';
-import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
+import { PAGE_SIZE, TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { TasksCache } from '../utils/tasks-cache';
 import { FinalizeRequest } from '../gelato-task-creation/finalize-request';
 import { sleep } from '../utils/utils';
 import { RequestForFinalizeData } from '@defi-wonderland/prophet-sdk/dist/batching/getBatchRequestForFinalizeData';
-
-const PAGE_SIZE = 50;
 
 export class FinalizeRequests {
   private scriptsCache: TasksCache = new TasksCache();
@@ -42,7 +40,7 @@ export class FinalizeRequests {
       do {
         try {
           requestsData = [...requestsData, ...(await this.listRequests(sdk, i * PAGE_SIZE, PAGE_SIZE))].filter(
-            (data) => data.requestId != address.zero
+            (data) => data.requestId != address.ZERO
           );
 
           if (firstNonFinalizedRequest >= i * PAGE_SIZE && firstNonFinalizedRequest <= i * PAGE_SIZE + PAGE_SIZE) {

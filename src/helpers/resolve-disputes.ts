@@ -1,13 +1,11 @@
 import hre from 'hardhat';
 import { ProphetSDK } from '@defi-wonderland/prophet-sdk';
 import { ContractRunner } from 'ethers-v6';
-import { TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
+import { DISPUTE_STATUS, PAGE_SIZE, TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
 import { DisputeData } from '@defi-wonderland/prophet-sdk/dist/batching/getBatchDisputeData';
 import { sleep } from '../utils/utils';
-
-const PAGE_SIZE = 50;
 
 export class ResolveDisputes {
   private scriptsCache: TasksCache = new TasksCache();
@@ -110,7 +108,7 @@ export class ResolveDisputes {
       do {
         try {
           disputesData = [...disputesData, ...(await this.listDisputes(sdk, startIndex, PAGE_SIZE))].filter(
-            (data) => data.requestId != address.zero
+            (data) => data.requestId != address.ZERO
           );
 
           if (firstNonResolvedDispute >= i * PAGE_SIZE && firstNonResolvedDispute <= i * PAGE_SIZE + PAGE_SIZE) {
@@ -138,12 +136,3 @@ export class ResolveDisputes {
     await this.processDisputeData(sdk, disputesData, firstNonResolvedDispute);
   }
 }
-
-const DISPUTE_STATUS: Record<number, string> = {
-  0: 'None',
-  1: 'Active',
-  2: 'Escalated',
-  3: 'Won',
-  4: 'Lost',
-  5: 'NoResolution',
-};

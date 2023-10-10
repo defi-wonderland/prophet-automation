@@ -1,5 +1,5 @@
 export const address = {
-  zero: '0x0000000000000000000000000000000000000000000000000000000000000000',
+  ZERO: '0x0000000000000000000000000000000000000000000000000000000000000000',
   deployed: {
     ORACLE: '0xC7F52019DfE600993c8088383668eFf1FBa4473a',
     ARBITRATOR_MODULE: '0x3614D49B9dd6Fb49C4A2D51974CECF679D7D12a5',
@@ -25,3 +25,13 @@ export const address = {
 export const TEXT_COLOR_GREEN = '\x1b[32m';
 export const TEXT_COLOR_RESET = '\x1b[0m';
 export const TRIES = 5;
+export const PAGE_SIZE = 50;
+
+export const DISPUTE_STATUS: Record<number, string> = {
+  0: 'None',
+  1: 'Active',
+  2: 'Escalated',
+  3: 'Won',
+  4: 'Lost',
+  5: 'NoResolution',
+};
