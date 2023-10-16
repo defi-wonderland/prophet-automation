@@ -5,6 +5,7 @@
   "repository": "git@github.com:defi-wonderland/prophet-automation-private.git",
   "license": "MIT",
   "author": "Wonderland",
+  "type": "module",
   "main": "dist/index.js",
   "files": [
     "dist",
@@ -14,6 +15,7 @@
     "build": "rm -rf dist && tsc -p tsconfig.json",
     "lint:check": "prettier --check './**' && eslint ./src",
     "lint:fix": "sort-package-json && prettier --write './**' && eslint ./src --fix",
+    "prepare": "husky install && wonderland-crypto-husky-checks install",
     "scripts:finalize-requests": "ts-node src/scripts/finalize-requests.ts",
     "scripts:resolve-disputes": "ts-node src/scripts/resolve-disputes.ts",
     "test": "cross-env mocha 'test/**/*.spec.ts' --network tenderly --timeout 1000000",
@@ -25,7 +27,10 @@
     }
   },
   "lint-staged": {
-    "*.ts": "eslint ./src/**/*.ts",
+    "*.ts": [
+      "prettier --write './**/*.ts'",
+      "eslint ./src --fix"
+    ],
     "package.json": "sort-package-json"
   },
   "resolutions": {
@@ -33,7 +38,7 @@
     "prophet-sdk/ethers": "6.7.0"
   },
   "dependencies": {
-    "@defi-wonderland/prophet-sdk": "0.0.0-bfcf3bba",
+    "@defi-wonderland/prophet-sdk": "0.0.0-1dcbc7cc",
     "@ethersproject/providers": "5.7.2",
     "@gelatonetwork/automate-sdk": "2.14.0",
     "@nomiclabs/hardhat-ethers": "2.2.3",
@@ -43,15 +48,18 @@
     "hardhat": "2.13.0"
   },
   "devDependencies": {
+    "@commitlint/cli": "17.6.5",
+    "@commitlint/config-conventional": "17.6.5",
+    "@defi-wonderland/crypto-husky-checks": "0.0.0-29a10090",
     "@types/chai-as-promised": "7.1.5",
     "@types/mocha": "10.0.1",
     "@types/node": "20.2.3",
-    "@typescript-eslint/eslint-plugin": "5.59.6",
-    "@typescript-eslint/parser": "5.59.6",
+    "@typescript-eslint/eslint-plugin": "6.7.5",
+    "@typescript-eslint/parser": "6.7.5",
     "chai": "4.3.7",
     "chai-as-promised": "7.1.1",
     "cross-env": "7.0.3",
-    "eslint": "^8.48.0",
+    "eslint": "8.40.0",
     "husky": "8.0.3",
     "lint-staged": "10",
     "mocha": "10.2.0",

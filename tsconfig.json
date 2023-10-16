@@ -7,9 +7,7 @@
     "esModuleInterop": true,
     "removeComments": true,
     "outDir": "dist",
-    "resolveJsonModule": true,
-    "typeRoots": ["./node_modules/@types"],
-    "moduleResolution": "node"
+    "resolveJsonModule": true
   },
   "files": ["hardhat.config.ts"],
   "include": ["hardhat", "src/**/*.ts"],

@@ -23,8 +23,5 @@
     "@typescript-eslint/no-unused-vars": "warn", // Warn about unused variables
     "no-undef": "error", // Warn about undeclared variables
     "eol-last": ["error", "always"] // Require a new line at the end of every file
-  },
-  "parserOptions": {
-    "ecmaVersion": 2020
   }
 }

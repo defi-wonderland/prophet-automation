@@ -19,6 +19,7 @@ yarn-error.log
 .env.example
 .env
 .prettierignore
+.eslintignore
 yarn.lock
 .gitignore
 LICENSE
