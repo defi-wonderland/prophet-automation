@@ -5,7 +5,7 @@ import { PAGE_SIZE, TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '.
 import { TasksCache } from '../utils/tasks-cache';
 import { FinalizeRequest } from '../gelato-task-creation/finalize-request';
 import { sleep } from '../utils/utils';
-import { RequestForFinalizeData } from '@defi-wonderland/prophet-sdk/dist/batching/getBatchRequestForFinalizeData';
+import { RequestForFinalizeData } from '@defi-wonderland/prophet-sdk/dist/src/types';
 
 export class FinalizeRequests {
   private scriptsCache: TasksCache = new TasksCache();
@@ -15,7 +15,7 @@ export class FinalizeRequests {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
 
-    const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
+    const sdk = new ProphetSDK(runner, address.deployed.ORACLE, {});
     let firstNonFinalizedRequest = await this.scriptsCache.getFirstNonFinalizedRequestIndex();
     firstNonFinalizedRequest = firstNonFinalizedRequest ? firstNonFinalizedRequest : 0;
 
@@ -78,13 +78,12 @@ export class FinalizeRequests {
     for (const data of requestData) {
       const finalized = data.finalizedAt != 0;
 
-      if ((await this.scriptsCache.isFinalizeRequestTaskCreated(data.requestId)) || finalized) {
+      if ((await this.scriptsCache.isFinalizeRequestTaskCreated(data.requestId.toString())) || finalized) {
         console.log(
           `task already created or finalized for requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}`
         );
       } else {
-        let notCreated = true;
-        for (const response of data.responses) {
+        for (const response of data.responsesIds) {
           try {
             // simulate the task -> create the gelato task -> save to cache the task created
             // 1- Simulate
@@ -94,7 +93,7 @@ export class FinalizeRequests {
             );
 
             // 2- Create the task in gelato
-            //this.requestFinalizer.automateTask(data.requestId, response.responseId);
+            //this.requestFinalizer.automateTask(data.requestId, response);
 
             // If the task was successfully submitted to gelato we can set the cache
             console.log(
@@ -102,41 +101,11 @@ export class FinalizeRequests {
             );
 
             // 3- Save to cache
-            await this.scriptsCache.setFinalizeRequestTaskCreated(data.requestId);
-
-            notCreated = false;
+            await this.scriptsCache.setFinalizeRequestTaskCreated(data.requestId.toString());
             break;
           } catch (error) {
             console.log(
               `error simulating finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET} and responseId: ${TEXT_COLOR_GREEN}${response}${TEXT_COLOR_RESET}`
-            );
-          }
-        }
-
-        if (notCreated) {
-          // If creating the task with the responses failed we try to create the task without the responseId
-          try {
-            // simulate the task -> create the gelato task -> save to cache the task created
-            // 1- Simulate
-            await sdk.helpers.callStatic('finalize(bytes32)', data.requestId);
-            console.log(
-              `simulated successfully finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}`
-            );
-
-            // 2- Create the task in gelato
-            this.requestFinalizer.automateTask(data.requestId);
-
-            // If the task was successfully submitted to gelato we can set the cache
-            console.log(
-              `task created for requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}, saving to cache`
-            );
-
-            // 3- Save to cache
-            await this.scriptsCache.setFinalizeRequestTaskCreated(data.requestId);
-          } catch (error) {
-            firstNonFinalizedRequest = Math.min(firstNonFinalizedRequest, index);
-            console.log(
-              `error simulating finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}`
             );
           }
         }

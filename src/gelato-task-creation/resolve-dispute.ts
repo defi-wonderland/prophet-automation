@@ -3,9 +3,10 @@ import config from '../config/config';
 import hre from 'hardhat';
 import { abi as IOracleAbi } from '@defi-wonderland/prophet-core-abi/abi/IOracle.json';
 import { address } from '../constants';
+import { BytesLike } from 'ethers-v6';
 
 export class ResolveDispute {
-  public async automateTask(disputeId: string): Promise<TaskTransaction> {
+  public async automateTask(disputeId: BytesLike): Promise<TaskTransaction> {
     const [signer] = await hre.ethers.getSigners();
     const automate = new AutomateSDK(config.CHAIN_ID, signer);
 
