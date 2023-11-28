@@ -5,6 +5,7 @@
   "repository": "git@github.com:defi-wonderland/prophet-automation-private.git",
   "license": "MIT",
   "author": "Wonderland",
+  "type": "module",
   "main": "dist/index.js",
   "files": [
     "dist",
@@ -37,7 +38,7 @@
     "prophet-sdk/ethers": "6.7.0"
   },
   "dependencies": {
-    "@defi-wonderland/prophet-sdk": "0.0.0-2fff8a11",
+    "@defi-wonderland/prophet-sdk": "0.0.0-3ab51291",
     "@ethersproject/providers": "5.7.2",
     "@gelatonetwork/automate-sdk": "2.14.0",
     "@nomiclabs/hardhat-ethers": "2.2.3",

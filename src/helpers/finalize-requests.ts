@@ -6,6 +6,7 @@ import { TasksCache } from '../utils/tasks-cache';
 import { FinalizeRequest } from '../gelato-task-creation/finalize-request';
 import { sleep } from '../utils/utils';
 import { RequestForFinalizeData } from '@defi-wonderland/prophet-sdk/dist/src/types';
+import { IOracle } from '@defi-wonderland/prophet-sdk/dist/src/types/typechain';
 
 export class FinalizeRequests {
   private scriptsCache: TasksCache = new TasksCache();
@@ -83,21 +84,28 @@ export class FinalizeRequests {
           `task already created or finalized for requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET}`
         );
       } else {
-        for (const response of data.responsesIds) {
+        for (const response of data.responses) {
+          const requestStruct: IOracle.RequestStruct = (
+            await sdk.helpers.getRequest(data.requestId, Number(data.requestCreatedAt))
+          ).request;
+          const responseStruct: IOracle.ResponseStruct = (
+            await sdk.helpers.getResponse(response.responseId, Number(response.responseCreatedAt))
+          ).response;
           try {
             // simulate the task -> create the gelato task -> save to cache the task created
             // 1- Simulate
-            await sdk.helpers.callStatic('finalize(bytes32,bytes32)', data.requestId, response);
+            await sdk.helpers.callStatic('finalize', requestStruct, responseStruct);
+            await sdk.helpers.finalize(requestStruct, responseStruct);
             console.log(
-              `simulated successfully finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET} and responseId: ${TEXT_COLOR_GREEN}${response}${TEXT_COLOR_RESET}`
+              `simulated successfully finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET} and responseId: ${TEXT_COLOR_GREEN}${response.responseId}${TEXT_COLOR_RESET}`
             );
 
             // 2- Create the task in gelato
-            //this.requestFinalizer.automateTask(data.requestId, response);
+            this.requestFinalizer.automateTask(requestStruct, responseStruct);
 
             // If the task was successfully submitted to gelato we can set the cache
             console.log(
-              `task created for requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET} and responseId: ${TEXT_COLOR_GREEN}${response}${TEXT_COLOR_RESET}, saving to cache`
+              `task created for requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET} and responseId: ${TEXT_COLOR_GREEN}${response.responseId}${TEXT_COLOR_RESET}, saving to cache`
             );
 
             // 3- Save to cache

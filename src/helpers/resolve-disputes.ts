@@ -45,16 +45,23 @@ export class ResolveDisputes {
                 }${TEXT_COLOR_RESET}`
               );
 
+              const requestStruct = (await sdk.helpers.getRequest(data.requestId, Number(data.requestCreatedAt)))
+                .request;
+              const responseStruct = (
+                await sdk.helpers.getResponse(dispute.responseId, Number(dispute.responseCreatedAt))
+              ).response;
+              const disputeWithId = await sdk.helpers.getDispute(dispute.disputeId, Number(dispute.disputeCreatedAt));
+
               // simulate the task -> create the gelato task -> save to cache the task created
               try {
                 console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
                 // 1- Simulate
-                await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
+                await sdk.helpers.callStatic('resolveDispute', requestStruct, responseStruct, disputeWithId.dispute);
 
                 console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
 
                 // 2- Create the task in gelato
-                this.disputeResolver.automateTask(dispute.disputeId);
+                this.disputeResolver.automateTask(requestStruct, responseStruct, disputeWithId);
 
                 // If the task was successfully submitted to gelato we can set the cache
                 console.log(
