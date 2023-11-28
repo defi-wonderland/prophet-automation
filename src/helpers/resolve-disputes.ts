@@ -6,6 +6,7 @@ import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
 import { DisputeData } from '@defi-wonderland/prophet-sdk/dist/src/types';
 import { sleep } from '../utils/utils';
+import { IOracle } from '@defi-wonderland/prophet-sdk/dist/src/types/typechain';
 
 export class ResolveDisputes {
   private scriptsCache: TasksCache = new TasksCache();
@@ -45,9 +46,10 @@ export class ResolveDisputes {
                 }${TEXT_COLOR_RESET}`
               );
 
-              const requestStruct = (await sdk.helpers.getRequest(data.requestId, Number(data.requestCreatedAt)))
+              let requestStruct: IOracle.RequestStruct = (await sdk.helpers.getRequest(data.requestId, Number(data.requestCreatedAt)))
                 .request;
-              const responseStruct = (
+              
+              let responseStruct: IOracle.ResponseStruct = (
                 await sdk.helpers.getResponse(dispute.responseId, Number(dispute.responseCreatedAt))
               ).response;
               const disputeWithId = await sdk.helpers.getDispute(dispute.disputeId, Number(dispute.disputeCreatedAt));
@@ -57,7 +59,7 @@ export class ResolveDisputes {
                 console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
                 // 1- Simulate
                 await sdk.helpers.callStatic('resolveDispute', requestStruct, responseStruct, disputeWithId.dispute);
-
+                
                 console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
 
                 // 2- Create the task in gelato

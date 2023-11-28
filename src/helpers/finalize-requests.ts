@@ -95,7 +95,7 @@ export class FinalizeRequests {
             // simulate the task -> create the gelato task -> save to cache the task created
             // 1- Simulate
             await sdk.helpers.callStatic('finalize', requestStruct, responseStruct);
-            await sdk.helpers.finalize(requestStruct, responseStruct);
+
             console.log(
               `simulated successfully finalize request with requestId: ${TEXT_COLOR_GREEN}${data.requestId}${TEXT_COLOR_RESET} and responseId: ${TEXT_COLOR_GREEN}${response.responseId}${TEXT_COLOR_RESET}`
             );
