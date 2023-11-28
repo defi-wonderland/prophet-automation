@@ -20,7 +20,7 @@ export class FinalizeRequest {
     const name = `Finalize Request: ${response.requestId}`;
 
     const { taskId, tx }: TaskTransaction = await automate.createTask({
-      execAddress: oracleContract.address, // TODO: change for gelatoRelay ask Ashi
+      execAddress: oracleContract.address, 
       // address _job, bytes calldata _jobData, address _feeRecipient
       execSelector: oracleContract.interface.getSighash(method),
       //execData?: string;  [address(job), work(uint256 _counter) [_counter], msg.sender]

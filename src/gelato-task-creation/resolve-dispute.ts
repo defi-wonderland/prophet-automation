@@ -18,7 +18,7 @@ export class ResolveDispute {
     const oracleContract = new hre.ethers.Contract(address.deployed.ORACLE, IOracleAbi, signer);
 
     const { taskId, tx }: TaskTransaction = await automate.createTask({
-      execAddress: oracleContract.address, // TODO: change for gelatoRelay ask Ashi
+      execAddress: oracleContract.address, 
       // address _job, bytes calldata _jobData, address _feeRecipient
       execSelector: oracleContract.interface.getSighash('resolveDispute(bytes32)'),
       //execData?: string;  [address(job), work(uint256 _counter) [_counter], msg.sender]
