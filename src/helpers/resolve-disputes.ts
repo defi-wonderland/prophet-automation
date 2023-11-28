@@ -4,8 +4,9 @@ import { ContractRunner } from 'ethers-v6';
 import { DISPUTE_STATUS, PAGE_SIZE, TEXT_COLOR_GREEN, TEXT_COLOR_RESET, TRIES, address } from '../constants';
 import { ResolveDispute } from '../gelato-task-creation/resolve-dispute';
 import { TasksCache } from '../utils/tasks-cache';
-import { DisputeData } from '@defi-wonderland/prophet-sdk/dist/batching/getBatchDisputeData';
+import { DisputeData } from '@defi-wonderland/prophet-sdk/dist/src/types';
 import { sleep } from '../utils/utils';
+import { IOracle } from '@defi-wonderland/prophet-sdk/dist/src/types/typechain';
 
 export class ResolveDisputes {
   private scriptsCache: TasksCache = new TasksCache();
@@ -31,7 +32,7 @@ export class ResolveDisputes {
           const status = Number(dispute.status);
 
           if (DISPUTE_STATUS[status] == 'Active' || DISPUTE_STATUS[status] == 'Escalated') {
-            if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId)) {
+            if (await this.scriptsCache.isDisputeTaskCreated(dispute.disputeId.toString())) {
               console.log(
                 `task already created for disputeId: ${TEXT_COLOR_GREEN}${dispute.disputeId}${TEXT_COLOR_RESET}`
               );
@@ -45,16 +46,24 @@ export class ResolveDisputes {
                 }${TEXT_COLOR_RESET}`
               );
 
+              let requestStruct: IOracle.RequestStruct = (await sdk.helpers.getRequest(data.requestId, Number(data.requestCreatedAt)))
+                .request;
+              
+              let responseStruct: IOracle.ResponseStruct = (
+                await sdk.helpers.getResponse(dispute.responseId, Number(dispute.responseCreatedAt))
+              ).response;
+              const disputeWithId = await sdk.helpers.getDispute(dispute.disputeId, Number(dispute.disputeCreatedAt));
+
               // simulate the task -> create the gelato task -> save to cache the task created
               try {
                 console.log('simulating resolve dispute with disputeId: ', dispute.disputeId);
                 // 1- Simulate
-                await sdk.helpers.callStatic('resolveDispute', dispute.disputeId);
-
+                await sdk.helpers.callStatic('resolveDispute', requestStruct, responseStruct, disputeWithId.dispute);
+                
                 console.log('simulated successfully resolve dispute with disputeId: ', dispute.disputeId);
 
                 // 2- Create the task in gelato
-                this.disputeResolver.automateTask(dispute.disputeId);
+                this.disputeResolver.automateTask(requestStruct, responseStruct, disputeWithId);
 
                 // If the task was successfully submitted to gelato we can set the cache
                 console.log(
@@ -62,7 +71,7 @@ export class ResolveDisputes {
                 );
 
                 // 3- Save to cache
-                await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId);
+                await this.scriptsCache.setDisputeTaskCreated(dispute.disputeId.toString());
               } catch (error) {
                 console.log('error simulating resolve dispute with disputeId: ', dispute.disputeId);
               }
@@ -83,7 +92,7 @@ export class ResolveDisputes {
   public async run() {
     const [signer] = await hre.ethers.getSigners();
     const runner = signer as unknown as ContractRunner;
-    const sdk = new ProphetSDK(runner, address.deployed.ORACLE);
+    const sdk = new ProphetSDK(runner, address.deployed.ORACLE, {});
 
     let firstNonResolvedDispute = await this.scriptsCache.getFirstNonResolvedDisputeRequestIndex();
     firstNonResolvedDispute = firstNonResolvedDispute ? firstNonResolvedDispute : 0;
