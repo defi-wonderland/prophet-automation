@@ -39,7 +39,7 @@
   "dependencies": {
     "@defi-wonderland/prophet-sdk": "0.0.0-ab5e3bdd",
     "@ethersproject/providers": "5.7.2",
-    "@gelatonetwork/automate-sdk": "2.14.0",
+    "@gelatonetwork/relay-sdk": "5.5.2",
     "@nomiclabs/hardhat-ethers": "2.2.3",
     "cacache": "18.0.0",
     "dotenv": "16.3.1",
